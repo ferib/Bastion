@@ -20,7 +20,7 @@ jobs:
       - name: LuaObfuscator REST API
         shell: bash {0}
         run: |
-            mkdir publicAura
+            mkdir public
             curl -X POST https://luaobfuscator.com/api/obfuscator/newscript \
             -H "Content-type: multipart/form-data" \
             -H "apikey: test" \
