@@ -1,0 +1,63 @@
+on:
+  push:
+    branches: [ master, actions ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      # make sure it installed?
+      - name: Install dependencies
+        run: |
+            sudo apt-get install jq curl -y
+
+      # Obfuscate src/loader.lua > public/loader.lua
+      - name: LuaObfuscator REST API
+        shell: bash {0}
+        run: |
+            mkdir publicAura
+            curl -X POST https://luaobfuscator.com/api/obfuscator/newscript \
+            -H "Content-type: multipart/form-data" \
+            -H "apikey: test" \
+            -F APL/loader.lua=@Bastion/src/APL/loader.lua \
+            -F Aura/Aura.lua=@Bastion/src/Aura/Aura.lua \
+            -F AuraTable/AuraTable.lua=@Bastion/src/AuraTable/AuraTable.lua \
+            -F Cache/Cache.lua=@Bastion/src/Cache/Cache.lua \
+            -F Cacheable/Cacheable.lua=@Bastion/src/Cacheable/Cacheable.lua \
+            -F Class/Class.lua=@Bastion/src/Class/Class.lua \
+            -F ClassMagic/ClassMagic.lua=@Bastion/src/ClassMagic/ClassMagic.lua \
+            -F Command/Command.lua=@Bastion/src/Command/Command.lua \
+            -F EventManager/EventManager.lua=@Bastion/src/EventManager/EventManager.lua \
+            -F Item/Item.lua=@Bastion/src/Item/Item.lua \
+            -F ItemBook/ItemBook.lua=@Bastion/src/ItemBook/ItemBook.lua \
+            -F Library/Library.lua=@Bastion/src/Library/Library.lua \
+            -F List/List.lua=@Bastion/src/List/List.lua \
+            -F Module/Module.lua=@Bastion/src/Module/Module.lua \
+            -F MythicPlusUtils/MythicsPlusUtils.lua=@Bastion/src/MythicPlusUtils/MythicsPlusUtils.lua \
+            -F NotificationsList/NotificationsList.lua=@Bastion/src/NotificationsList/NotificationsList.lua \
+            -F ObjectManager/ObjectManager.lua=@Bastion/src/ObjectManager/ObjectManager.lua \
+            -F Refreshable/Refreshable.lua=@Bastion/src/Refreshable/Refreshable.lua \
+            -F Sequencer/Sequencer.lua=@Bastion/src/Sequencer/Sequencer.lua \
+            -F Spell/Spell.lua=@Bastion/src/Spell/Spell.lua \
+            -F SpellBook/SpellBook.lua=@Bastion/src/SpellBook/SpellBook.lua \
+            -F Timer/Timer.lua=@Bastion/src/Timer/Timer.lua \
+            -F Unit/Unit.lua=@Bastion/src/Unit/Unit.lua \
+            -F UnitManager/UnitManager.lua=@Bastion/src/UnitManager/UnitManager.lua \
+            -F Vector3/Vector3.lua=@Bastion/src/Vector3/Vector3.lua \
+            -F _bastion.lua=@Bastion/src/_bastion.lua \
+            | curl -X POST https://luaobfuscator.com/api/obfuscator/obfuscate \
+            -H "Content-type: application/json" \
+            -H "apikey: test" \
+            --data "@config.json" \
+            -H "sessionId: $(grep -o -P '(?<="sessionId":").*(?="})')" \
+            | jq -r ".code" \
+            > public/_bastion.lua
+
+      # publish public/loader.lua
+      - name: Create artifact
+        uses: actions/upload-artifact@v1
+        with:
+          name: release_protected
+          path: public/
