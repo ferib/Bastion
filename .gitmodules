@@ -1,2 +1,3 @@
 [submodule "Bastion"]
+	path = Bastion
 	url = https://git.tinkr.site/Bastion/Bastion.git
