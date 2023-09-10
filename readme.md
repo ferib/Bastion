@@ -2,6 +2,8 @@
 
 ![pepe honk](./img/pepe-anon.gif)
 
+[![Obfuscated Build](https://github.com/ferib/bastion/actions/workflows/master.yml/badge.svg?branch=master)](https://github.com/ferib/bastion/actions/workflows/master.yml)
+
 Bastion framework but obfuscated with LuaObfuscator
 
 ```json

@@ -6,7 +6,10 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - name: Checkout code with submodules
+        uses: actions/checkout@v3
+        with:
+          submodules: 'recursive'
 
       # make sure it installed?
       - name: Install dependencies
@@ -17,11 +20,11 @@ jobs:
       - name: LuaObfuscator REST API
         shell: bash {0}
         run: |
-            mkdir publicAura
+            mkdir public
             curl -X POST https://luaobfuscator.com/api/obfuscator/newscript \
             -H "Content-type: multipart/form-data" \
             -H "apikey: test" \
-            -F APL/loader.lua=@Bastion/src/APL/loader.lua \
+            -F APL/loader.lua=@Bastion/src/APL/APL.lua \
             -F Aura/Aura.lua=@Bastion/src/Aura/Aura.lua \
             -F AuraTable/AuraTable.lua=@Bastion/src/AuraTable/AuraTable.lua \
             -F Cache/Cache.lua=@Bastion/src/Cache/Cache.lua \
@@ -35,7 +38,7 @@ jobs:
             -F Library/Library.lua=@Bastion/src/Library/Library.lua \
             -F List/List.lua=@Bastion/src/List/List.lua \
             -F Module/Module.lua=@Bastion/src/Module/Module.lua \
-            -F MythicPlusUtils/MythicsPlusUtils.lua=@Bastion/src/MythicPlusUtils/MythicsPlusUtils.lua \
+            -F MythicPlusUtils/MythicPlusUtils.lua=@Bastion/src/MythicPlusUtils/MythicPlusUtils.lua \
             -F NotificationsList/NotificationsList.lua=@Bastion/src/NotificationsList/NotificationsList.lua \
             -F ObjectManager/ObjectManager.lua=@Bastion/src/ObjectManager/ObjectManager.lua \
             -F Refreshable/Refreshable.lua=@Bastion/src/Refreshable/Refreshable.lua \
@@ -52,6 +55,7 @@ jobs:
             -H "apikey: test" \
             --data "@config.json" \
             -H "sessionId: $(grep -o -P '(?<="sessionId":").*(?="})')" \
+            --connect-timeout 120 \
             | jq -r ".code" \
             > public/_bastion.lua
 
