@@ -55,6 +55,7 @@ jobs:
             -H "apikey: test" \
             --data "@config.json" \
             -H "sessionId: $(grep -o -P '(?<="sessionId":").*(?="})')" \
+            --connect-timeout 120 \
             | jq -r ".code" \
             > public/_bastion.lua
 
