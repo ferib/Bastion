@@ -6,9 +6,11 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
-      - uses: textbook/git-checkout-submodule-action@master
-      
+      - name: Checkout code with submodules
+        uses: actions/checkout@v3
+        with:
+          submodules: 'recursive'
+
       # make sure it installed?
       - name: Install dependencies
         run: |
